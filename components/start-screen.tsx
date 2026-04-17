@@ -28,7 +28,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
         </div>
 
         {/* How to Play */}
-        <div className="bg-card rounded-xl p-6 mb-8 border border-border text-left">
+        <div className="bg-card rounded-xl p-6 mb-8 border border-border text-left shadow-sm">
           <h2 className="text-lg font-semibold text-foreground mb-4">
             How to Play
           </h2>
@@ -61,11 +61,11 @@ export function StartScreen({ onStart }: StartScreenProps) {
         </div>
 
         {/* Hard Mode Toggle */}
-        <div className="bg-card rounded-xl p-4 mb-8 border border-border">
+        <div className="bg-card rounded-xl p-4 mb-8 border border-border shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <Zap className="w-5 h-5 text-accent" />
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Zap className="w-5 h-5 text-primary" />
               </div>
               <div className="text-left">
                 <p className="font-medium text-foreground">Hard Mode</p>

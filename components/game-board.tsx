@@ -1,6 +1,7 @@
 "use client"
 
-import { MapPin, Languages, ArrowRight, Flame, X } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
+import { MapPin, Languages, ArrowRight, Flame, X, Search, AlertCircle } from "lucide-react"
 import { getLanguageRarity, countryLanguages } from "@/lib/game-data"
 import type { GameState, Move } from "@/hooks/use-game"
 
@@ -25,28 +26,79 @@ export function GameBoard({
   onCancelLanguageSelection,
   onSelectCountry,
 }: GameBoardProps) {
+  const [countryInput, setCountryInput] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Focus input when language is selected
+  useEffect(() => {
+    if (selectedLanguage && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [selectedLanguage])
+
+  // Clear input when language changes
+  useEffect(() => {
+    setCountryInput("")
+    setError(null)
+  }, [selectedLanguage])
+
+  const handleCountrySubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+
+    const normalizedInput = countryInput.trim().toLowerCase()
+    
+    // Find matching country (case-insensitive)
+    const matchedCountry = availableCountries.find(
+      country => country.toLowerCase() === normalizedInput
+    )
+
+    if (!matchedCountry) {
+      // Check if it's a valid country but already visited
+      const allCountries = Object.keys(countryLanguages)
+      const existingCountry = allCountries.find(
+        c => c.toLowerCase() === normalizedInput
+      )
+      
+      if (existingCountry) {
+        if (gameState.visitedCountries.has(existingCountry)) {
+          setError(`You've already visited ${existingCountry}`)
+        } else if (!countryLanguages[existingCountry]?.includes(selectedLanguage!)) {
+          setError(`${existingCountry} doesn't speak ${selectedLanguage}`)
+        }
+      } else {
+        setError("Country not recognized. Check your spelling!")
+      }
+      return
+    }
+
+    onSelectCountry(matchedCountry)
+    setCountryInput("")
+  }
+
   return (
     <div className="min-h-screen flex flex-col p-4 md:p-6 max-w-7xl mx-auto">
       {/* Stats Bar */}
       <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-card rounded-xl p-4 border border-border text-center">
+        <div className="bg-card rounded-xl p-4 border border-border text-center shadow-sm">
           <p className="text-muted-foreground text-sm mb-1">Score</p>
           <p className="text-2xl md:text-3xl font-bold text-primary">
             {gameState.score}
           </p>
         </div>
-        <div className="bg-card rounded-xl p-4 border border-border text-center">
+        <div className="bg-card rounded-xl p-4 border border-border text-center shadow-sm">
           <p className="text-muted-foreground text-sm mb-1">Streak</p>
           <div className="flex items-center justify-center gap-1">
             <Flame
-              className={`w-5 h-5 ${gameState.streak > 0 ? "text-accent" : "text-muted-foreground"}`}
+              className={`w-5 h-5 ${gameState.streak > 0 ? "text-primary" : "text-muted-foreground"}`}
             />
             <p className="text-2xl md:text-3xl font-bold text-foreground">
               {gameState.streak}
             </p>
           </div>
         </div>
-        <div className="bg-card rounded-xl p-4 border border-border text-center">
+        <div className="bg-card rounded-xl p-4 border border-border text-center shadow-sm">
           <p className="text-muted-foreground text-sm mb-1">Moves</p>
           <p className="text-2xl md:text-3xl font-bold text-foreground">
             {gameState.movesRemaining}
@@ -59,7 +111,7 @@ export function GameBoard({
         {/* Current Country & Selection */}
         <div className="lg:col-span-2 space-y-6">
           {/* Current Country */}
-          <div className="bg-card rounded-xl p-6 border border-border">
+          <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                 <MapPin className="w-6 h-6 text-primary" />
@@ -77,11 +129,11 @@ export function GameBoard({
             {gameState.lastLanguage && (
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <span>Last language:</span>
-                <span className="px-2 py-1 bg-accent/10 text-accent rounded-md font-medium">
+                <span className="px-2 py-1 bg-primary/10 text-primary rounded-md font-medium">
                   {gameState.lastLanguage}
                 </span>
                 {gameState.streak > 0 && (
-                  <span className="text-accent">
+                  <span className="text-primary">
                     (Streak x{gameState.streak})
                   </span>
                 )}
@@ -91,7 +143,7 @@ export function GameBoard({
 
           {/* Language or Country Selection */}
           {!selectedLanguage ? (
-            <div className="bg-card rounded-xl p-6 border border-border">
+            <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <Languages className="w-5 h-5 text-muted-foreground" />
                 <h3 className="text-lg font-semibold text-foreground">
@@ -114,9 +166,9 @@ export function GameBoard({
                       <button
                         key={language}
                         onClick={() => onSelectLanguage(language)}
-                        className={`p-4 rounded-xl border text-left transition-all hover:border-primary/50 hover:bg-primary/5 ${
+                        className={`p-4 rounded-xl border text-left transition-all hover:border-primary hover:bg-primary/5 ${
                           isSameAsLast
-                            ? "border-accent/50 bg-accent/5"
+                            ? "border-primary/50 bg-primary/5"
                             : "border-border"
                         }`}
                       >
@@ -125,7 +177,7 @@ export function GameBoard({
                             {language}
                           </span>
                           {isSameAsLast && (
-                            <Flame className="w-4 h-4 text-accent" />
+                            <Flame className="w-4 h-4 text-primary" />
                           )}
                         </div>
                         <div className="flex items-center justify-between text-sm">
@@ -150,12 +202,12 @@ export function GameBoard({
               )}
             </div>
           ) : (
-            <div className="bg-card rounded-xl p-6 border border-border">
+            <div className="bg-card rounded-xl p-6 border border-border shadow-sm">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-3">
                   <MapPin className="w-5 h-5 text-muted-foreground" />
                   <h3 className="text-lg font-semibold text-foreground">
-                    Travel to{" "}
+                    Enter a{" "}
                     <span className="text-primary">{selectedLanguage}</span>
                     -speaking country
                   </h3>
@@ -168,29 +220,52 @@ export function GameBoard({
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
-                {availableCountries.map((country) => (
-                  <button
-                    key={country}
-                    onClick={() => onSelectCountry(country)}
-                    className="p-4 rounded-xl border border-border text-left transition-all hover:border-primary/50 hover:bg-primary/5"
-                  >
-                    <span className="font-medium text-foreground">
-                      {country}
-                    </span>
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      {countryLanguages[country]?.length || 0} languages
-                    </div>
-                  </button>
-                ))}
-              </div>
+              {/* Country Input Form */}
+              <form onSubmit={handleCountrySubmit} className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={countryInput}
+                    onChange={(e) => {
+                      setCountryInput(e.target.value)
+                      setError(null)
+                    }}
+                    placeholder="Type a country name..."
+                    className="w-full pl-12 pr-4 py-4 rounded-xl border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-lg"
+                    autoComplete="off"
+                    spellCheck={false}
+                  />
+                </div>
+
+                {error && (
+                  <div className="flex items-center gap-2 text-destructive text-sm p-3 bg-destructive/10 rounded-lg">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                    <span>{error}</span>
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={!countryInput.trim()}
+                  className="w-full py-4 px-6 bg-primary text-primary-foreground rounded-xl font-semibold text-lg hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Travel to Country
+                </button>
+              </form>
+
+              {/* Hint: Show number of available countries */}
+              <p className="mt-4 text-center text-sm text-muted-foreground">
+                {availableCountries.length} countries available
+              </p>
             </div>
           )}
         </div>
 
         {/* Move History */}
         <div className="lg:col-span-1">
-          <div className="bg-card rounded-xl p-6 border border-border h-full max-h-[600px] overflow-hidden flex flex-col">
+          <div className="bg-card rounded-xl p-6 border border-border h-full max-h-[600px] overflow-hidden flex flex-col shadow-sm">
             <h3 className="text-lg font-semibold text-foreground mb-4">
               Move History
             </h3>
@@ -233,7 +308,7 @@ function MoveHistoryItem({
         <span className="text-xs text-muted-foreground">Move {moveNumber}</span>
         <div className="flex items-center gap-1">
           {move.streak > 1 && (
-            <span className="flex items-center gap-1 text-xs text-accent">
+            <span className="flex items-center gap-1 text-xs text-primary">
               <Flame className="w-3 h-3" />
               x{move.streak}
             </span>

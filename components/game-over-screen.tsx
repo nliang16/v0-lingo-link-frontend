@@ -45,7 +45,7 @@ export function GameOverScreen({
         </div>
 
         {/* Final Score */}
-        <div className="bg-card rounded-xl p-8 mb-6 border border-border">
+        <div className="bg-card rounded-xl p-8 mb-6 border border-border shadow-sm">
           <p className="text-muted-foreground mb-2">Final Score</p>
           <p className="text-5xl md:text-6xl font-bold text-primary mb-6">
             {gameState.score}
@@ -64,7 +64,7 @@ export function GameOverScreen({
             </div>
             <div className="bg-secondary/50 rounded-lg p-4">
               <div className="flex items-center justify-center gap-2 mb-1">
-                <Flame className="w-4 h-4 text-accent" />
+                <Flame className="w-4 h-4 text-primary" />
                 <span className="text-muted-foreground text-sm">
                   Best Streak
                 </span>
@@ -76,7 +76,7 @@ export function GameOverScreen({
 
         {/* Best Move */}
         {bestMove.points > 0 && (
-          <div className="bg-card rounded-xl p-4 mb-6 border border-border">
+          <div className="bg-card rounded-xl p-4 mb-6 border border-border shadow-sm">
             <p className="text-sm text-muted-foreground mb-2">Best Move</p>
             <p className="text-foreground">
               <span className="font-medium">{bestMove.fromCountry}</span>
