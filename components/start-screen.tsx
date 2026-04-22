@@ -23,7 +23,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
             LingoLink
           </h1>
           <p className="text-muted-foreground text-lg">
-            Are you truly worldly? Challenge your knowledge of the world by connecting countries through shared languages!
+            Are you truly worldly? Challenge your knowledge by connecting countries through shared languages!
           </p>
         </div>
 
