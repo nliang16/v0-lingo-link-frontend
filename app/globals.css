@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #EFE9F4;
+  --background: #EAEBED;
   --foreground: #171D1C;
   --card: #FFFFFF;
   --card-foreground: #171D1C;
@@ -12,16 +12,16 @@
   --popover-foreground: #171D1C;
   --primary: #16BAC5;
   --primary-foreground: #FFFFFF;
-  --secondary: #E0D8E6;
+  --secondary: #DCDEE0;
   --secondary-foreground: #171D1C;
-  --muted: #E0D8E6;
+  --muted: #DCDEE0;
   --muted-foreground: #5A6362;
   --accent: #0FA3AD;
   --accent-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --border: #D1C8D9;
-  --input: #E0D8E6;
+  --border: #D0D2D5;
+  --input: #DCDEE0;
   --ring: #16BAC5;
   --chart-1: #16BAC5;
   --chart-2: #0FA3AD;
@@ -33,9 +33,9 @@
   --sidebar-foreground: #171D1C;
   --sidebar-primary: #16BAC5;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #E0D8E6;
+  --sidebar-accent: #DCDEE0;
   --sidebar-accent-foreground: #171D1C;
-  --sidebar-border: #D1C8D9;
+  --sidebar-border: #D0D2D5;
   --sidebar-ring: #16BAC5;
 }
 
@@ -75,7 +75,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Geist', 'Geist Fallback';
+  --font-sans: 'DM Sans', 'DM Sans Fallback', sans-serif;
   --font-mono: 'Geist Mono', 'Geist Mono Fallback';
   --color-background: var(--background);
   --color-foreground: var(--foreground);
