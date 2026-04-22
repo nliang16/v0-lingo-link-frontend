@@ -55,7 +55,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
               <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-sm font-medium flex items-center justify-center">
                 4
               </span>
-              <span>Rarer languages score more points</span>
+              <span>Rarer languages score more points!!!!!!</span>
             </li>
           </ul>
         </div>
