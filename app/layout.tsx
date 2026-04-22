@@ -3,7 +3,11 @@ import { DM_Sans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const _dmSans = DM_Sans({ subsets: ["latin"], weight: ["400", "500", "600", "700"] });
+const dmSans = DM_Sans({ 
+  subsets: ["latin"], 
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-dm-sans"
+});
 
 export const metadata: Metadata = {
   title: 'LingoLink - Connect Countries Through Languages',
@@ -34,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="bg-background">
+    <html lang="en" className={`${dmSans.variable} bg-background`}>
       <body className="font-sans antialiased min-h-screen">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
