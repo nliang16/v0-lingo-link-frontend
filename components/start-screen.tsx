@@ -23,7 +23,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
             LingoLink
           </h1>
           <p className="text-muted-foreground text-lg">
-            Connect countries through shared languages
+            Are you truly worldly? Challenge your knowledge of the world by connecting countries through shared languages!
           </p>
         </div>
 
@@ -56,6 +56,12 @@ export function StartScreen({ onStart }: StartScreenProps) {
                 4
               </span>
               <span>Rarer languages score more points</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 text-primary text-sm font-medium flex items-center justify-center">
+                5
+              </span>
+              <span>Try to score as many points as possible in 30 moves</span>
             </li>
           </ul>
         </div>

@@ -27,13 +27,26 @@ export interface GameState {
   moveHistory: Move[]
   gameOver: boolean
   hardMode: boolean
+  refreshedToCountry: string | null
 }
 
 const MAX_MOVES = 30
 
 function getRandomCountry(): string {
-  const randomIndex = Math.floor(Math.random() * allCountries.length)
-  return allCountries[randomIndex]
+  return allCountries[Math.floor(Math.random() * allCountries.length)]
+}
+
+function hasViableMovesFromCountry(
+  country: string,
+  visited: Set<string>,
+  langUsage: Record<string, number>,
+  maxUses: number
+): boolean {
+  const langs = countryLanguages[country] || []
+  return langs.some((lang) => {
+    if ((langUsage[lang] || 0) >= maxUses) return false
+    return getCountriesByLanguage(lang).some((c) => !visited.has(c))
+  })
 }
 
 export function useGame() {
@@ -53,6 +66,7 @@ export function useGame() {
       moveHistory: [],
       gameOver: false,
       hardMode,
+      refreshedToCountry: null,
     })
     setSelectedLanguage(null)
   }, [])
@@ -63,20 +77,20 @@ export function useGame() {
 
   const availableLanguages = useMemo(() => {
     if (!gameState) return []
-    const languages = countryLanguages[gameState.currentCountry] || []
-    return languages.filter((lang) => {
-      const usage = gameState.languageUsage[lang] || 0
-      if (usage >= maxLanguageUses) return false
-      // Check if there are any unvisited countries for this language
-      const countries = getCountriesByLanguage(lang)
-      return countries.some((c) => !gameState.visitedCountries.has(c))
+    const langs = countryLanguages[gameState.currentCountry] || []
+    return langs.filter((lang) => {
+      if ((gameState.languageUsage[lang] || 0) >= maxLanguageUses) return false
+      return getCountriesByLanguage(lang).some(
+        (c) => !gameState.visitedCountries.has(c)
+      )
     })
   }, [gameState, maxLanguageUses])
 
   const availableCountries = useMemo(() => {
     if (!selectedLanguage || !gameState) return []
-    const countries = getCountriesByLanguage(selectedLanguage)
-    return countries.filter((c) => !gameState.visitedCountries.has(c))
+    return getCountriesByLanguage(selectedLanguage).filter(
+      (c) => !gameState.visitedCountries.has(c)
+    )
   }, [selectedLanguage, gameState])
 
   const selectLanguage = useCallback((language: string) => {
@@ -112,36 +126,55 @@ export function useGame() {
         (newLanguageUsage[selectedLanguage] || 0) + 1
 
       const newMovesRemaining = gameState.movesRemaining - 1
+      const maxUses = gameState.hardMode ? 4 : 7
 
-      // Check if game is over
       let isGameOver = newMovesRemaining === 0
+      let finalCountry = country
+      let finalLastLanguage: string | null = selectedLanguage
+      let finalStreak = newStreak
+      let refreshedTo: string | null = null
 
-      // Check if no valid moves remain
       if (!isGameOver) {
-        const languagesInNewCountry = countryLanguages[country] || []
-        const maxUses = gameState.hardMode ? 4 : 7
-        const hasValidMove = languagesInNewCountry.some((lang) => {
-          const usage = newLanguageUsage[lang] || 0
-          if (usage >= maxUses) return false
-          const countries = getCountriesByLanguage(lang)
-          return countries.some((c) => !newVisited.has(c))
-        })
+        const hasValidMove = hasViableMovesFromCountry(
+          country,
+          newVisited,
+          newLanguageUsage,
+          maxUses
+        )
+
         if (!hasValidMove) {
-          isGameOver = true
+          // Port of Java's refreshCountry(): teleport to a random viable unvisited country
+          const candidates = allCountries.filter(
+            (c) =>
+              !newVisited.has(c) &&
+              hasViableMovesFromCountry(c, newVisited, newLanguageUsage, maxUses)
+          )
+
+          if (candidates.length === 0) {
+            isGameOver = true
+          } else {
+            finalCountry =
+              candidates[Math.floor(Math.random() * candidates.length)]
+            newVisited.add(finalCountry)
+            finalLastLanguage = null
+            finalStreak = 0
+            refreshedTo = finalCountry
+          }
         }
       }
 
       setGameState({
         ...gameState,
-        currentCountry: country,
+        currentCountry: finalCountry,
         visitedCountries: newVisited,
         score: gameState.score + points,
-        streak: newStreak,
+        streak: finalStreak,
         movesRemaining: newMovesRemaining,
-        lastLanguage: selectedLanguage,
+        lastLanguage: finalLastLanguage,
         languageUsage: newLanguageUsage,
         moveHistory: [...gameState.moveHistory, move],
         gameOver: isGameOver,
+        refreshedToCountry: refreshedTo,
       })
 
       setSelectedLanguage(null)
