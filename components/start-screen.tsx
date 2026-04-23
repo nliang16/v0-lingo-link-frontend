@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Globe, Zap } from "lucide-react"
+import { Zap } from "lucide-react"
 import { Switch } from "@/components/ui/switch"
 
 interface StartScreenProps {
@@ -16,8 +16,8 @@ export function StartScreen({ onStart }: StartScreenProps) {
       <div className="max-w-md w-full text-center">
         {/* Logo and Title */}
         <div className="mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-6">
-            <Globe className="w-10 h-10 text-primary" />
+          <div className="mb-6">
+            <img src="https://i.imgur.com/NKimyC0.png" alt="LingoLink logo" className="w-24 h-24 object-contain mx-auto" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight">
             LingoLink
