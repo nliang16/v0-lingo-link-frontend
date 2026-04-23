@@ -17,7 +17,7 @@ export function StartScreen({ onStart }: StartScreenProps) {
         {/* Logo and Title */}
         <div className="mb-8">
           <div className="mb-6">
-            <img src="https://i.imgur.com/NKimyC0.png" alt="LingoLink logo" className="w-24 h-24 object-contain mx-auto" />
+            <img src="https://i.imgur.com/NKimyC0.png" alt="LingoLink logo" className="w-24 h-24 object-contain mx-auto mix-blend-mode-multiply" style={{ mixBlendMode: "multiply" }} />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3 tracking-tight">
             LingoLink
